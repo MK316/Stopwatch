@@ -5,25 +5,34 @@ from datetime import datetime
 # Set page configuration
 st.set_page_config(page_title="Countdown Timer", layout="centered")
 
-# Initialize session state
+# Initialize session state for countdown
 if "countdown_started" not in st.session_state:
     st.session_state.countdown_started = False
 if "start_time" not in st.session_state:
     st.session_state.start_time = 0
 if "remaining_time" not in st.session_state:
     st.session_state.remaining_time = 0
+if "time_up" not in st.session_state:
+    st.session_state.time_up = False
+
+# Function to display the current time (as a live digital clock)
+def display_current_time():
+    current_time = datetime.now().strftime("%H:%M:%S")
+    current_time_placeholder.markdown(f"<h3 style='text-align: center;'>{current_time}</h3>", unsafe_allow_html=True)
 
 # Function to start the countdown timer
 def start_countdown():
     if not st.session_state.countdown_started:
         st.session_state.remaining_time = st.session_state.start_time
         st.session_state.countdown_started = True
+        st.session_state.time_up = False
 
 # Function to reset the countdown timer
 def reset_countdown():
     st.session_state.start_time = 0
     st.session_state.remaining_time = 0
     st.session_state.countdown_started = False
+    st.session_state.time_up = False
 
 # Title
 st.title("⏳ Countdown Timer with Sound")
@@ -31,12 +40,10 @@ st.title("⏳ Countdown Timer with Sound")
 # Placeholder to display the current time (digital clock)
 current_time_placeholder = st.empty()
 
-# Function to display the current time (as a live digital clock)
-def display_current_time():
-    while st.session_state.countdown_started:
-        current_time = datetime.now().strftime("%H:%M:%S")
-        current_time_placeholder.markdown(f"<h3 style='text-align: center;'>{current_time}</h3>", unsafe_allow_html=True)
-        time.sleep(1)
+# Continuously update current time regardless of countdown status
+while True:
+    display_current_time()
+    time.sleep(1)
 
 # Input field for countdown time in seconds
 st.session_state.start_time = st.number_input("Set Countdown Time (in seconds)", min_value=0, max_value=3600, value=10)
@@ -53,11 +60,8 @@ with col2:
 # Placeholder for displaying the countdown time
 placeholder = st.empty()
 
-# Timer countdown loop
-if st.session_state.countdown_started:
-    # Start live clock in the background while the countdown runs
-    display_current_time()
-
+# Timer countdown loop (only runs when countdown has started)
+if st.session_state.countdown_started and not st.session_state.time_up:
     while st.session_state.remaining_time > 0:
         minutes, seconds = divmod(st.session_state.remaining_time, 60)
         placeholder.write(f"**Remaining Time:** {int(minutes):02d}:{int(seconds):02d}")
@@ -65,9 +69,11 @@ if st.session_state.countdown_started:
         # Countdown logic
         st.session_state.remaining_time -= 1
         time.sleep(1)
+        display_current_time()  # Update the current time each second
 
     # When the countdown finishes, display the message and play the sound
     if st.session_state.remaining_time <= 0:
+        st.session_state.time_up = True
         placeholder.write("⏰ **Time's Up!**")
         st.session_state.countdown_started = False
 
