@@ -26,7 +26,12 @@ current_time_placeholder = st.empty()
 def display_current_time():
     seoul_tz = pytz.timezone('Asia/Seoul')  # Set timezone to Seoul
     current_time = datetime.now(seoul_tz).strftime("%H:%M:%S")  # Convert to Seoul time
-    current_time_placeholder.markdown(f"<h3 style='text-align: center;'>{current_time}</h3>", unsafe_allow_html=True)
+    
+    # Style the clock (increase font size and set color)
+    current_time_placeholder.markdown(
+        f"<h1 style='text-align: center; font-size: 80px; color: #00FF00;'>{current_time}</h1>",  # Green and large font
+        unsafe_allow_html=True
+    )
     
 # Function to start the countdown timer
 def start_countdown():
