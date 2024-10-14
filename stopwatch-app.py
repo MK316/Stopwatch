@@ -1,83 +1,66 @@
 import streamlit as st
 import time
 from playsound import playsound
-import os
 
 # Set page configuration
-st.set_page_config(page_title="Stopwatch", layout="centered")
+st.set_page_config(page_title="Countdown Timer", layout="centered")
 
 # Initialize session state
-if "stopwatch_started" not in st.session_state:
-    st.session_state.stopwatch_started = False
+if "countdown_started" not in st.session_state:
+    st.session_state.countdown_started = False
 if "start_time" not in st.session_state:
-    st.session_state.start_time = 0.0
-if "elapsed_time" not in st.session_state:
-    st.session_state.elapsed_time = 0.0
+    st.session_state.start_time = 0
+if "remaining_time" not in st.session_state:
+    st.session_state.remaining_time = 0
 
-# Function to start the stopwatch
-def start_stopwatch():
-    if not st.session_state.stopwatch_started:
-        st.session_state.start_time = time.time() - st.session_state.elapsed_time
-        st.session_state.stopwatch_started = True
+# Function to start the countdown timer
+def start_countdown():
+    if not st.session_state.countdown_started:
+        st.session_state.remaining_time = st.session_state.start_time
+        st.session_state.countdown_started = True
 
-# Function to stop the stopwatch
-def stop_stopwatch():
-    if st.session_state.stopwatch_started:
-        st.session_state.elapsed_time = time.time() - st.session_state.start_time
-        st.session_state.stopwatch_started = False
+# Function to reset the countdown timer
+def reset_countdown():
+    st.session_state.start_time = 0
+    st.session_state.remaining_time = 0
+    st.session_state.countdown_started = False
 
-# Function to reset the stopwatch
-def reset_stopwatch():
-    st.session_state.start_time = 0.0
-    st.session_state.elapsed_time = 0.0
-    st.session_state.stopwatch_started = False
-
-# Function to play sound when the time is up
+# Function to play the sound when the countdown finishes
 def play_sound(file_path):
-    if os.path.exists(file_path):
-        playsound(file_path)
+    playsound(file_path)
 
 # Title
-st.title("⏱️ Stopwatch with Sound")
+st.title("⏳ Countdown Timer with Sound")
 
-# Upload mp3 file for sound
-sound_file = st.file_uploader("Upload an MP3 sound to play when time is up", type=["mp3"])
+# Input field for countdown time in seconds
+st.session_state.start_time = st.number_input("Set Countdown Time (in seconds)", min_value=0, max_value=3600, value=10)
 
-# Display buttons
-col1, col2, col3 = st.columns(3)
+# Countdown Start, Stop, and Reset buttons
+col1, col2 = st.columns(2)
 with col1:
-    if st.button("Start"):
-        start_stopwatch()
+    if st.button("Start Countdown"):
+        start_countdown()
 with col2:
-    if st.button("Stop"):
-        stop_stopwatch()
-        if sound_file is not None:
-            with open("uploaded_sound.mp3", "wb") as f:
-                f.write(sound_file.read())
-            play_sound("uploaded_sound.mp3")
-with col3:
-    if st.button("Reset"):
-        reset_stopwatch()
+    if st.button("Reset Countdown"):
+        reset_countdown()
 
-# Placeholder for displaying time
+# Placeholder for displaying the countdown time
 placeholder = st.empty()
 
-# Show stopwatch time
-while st.session_state.stopwatch_started:
-    st.session_state.elapsed_time = time.time() - st.session_state.start_time
-    elapsed_time = st.session_state.elapsed_time
-    minutes, seconds = divmod(elapsed_time, 60)
-    milliseconds = (elapsed_time - int(elapsed_time)) * 1000
-
-    # Update the time display
-    placeholder.write(f"**Elapsed Time:** {int(minutes):02d}:{int(seconds):02d}:{int(milliseconds):03d}")
-
-    # Refresh every second
+# Timer countdown loop
+while st.session_state.countdown_started and st.session_state.remaining_time > 0:
+    st.session_state.remaining_time -= 1
+    minutes, seconds = divmod(st.session_state.remaining_time, 60)
+    placeholder.write(f"**Remaining Time:** {int(minutes):02d}:{int(seconds):02d}")
+    
+    # Pause for a second
     time.sleep(1)
 
-# Display the final time if the stopwatch is stopped
-if not st.session_state.stopwatch_started:
-    elapsed_time = st.session_state.elapsed_time
-    minutes, seconds = divmod(elapsed_time, 60)
-    milliseconds = (elapsed_time - int(elapsed_time)) * 1000
-    placeholder.write(f"**Final Time:** {int(minutes):02d}:{int(seconds):02d}:{int(milliseconds):03d}")
+# When the countdown finishes, display the message and play the sound
+if st.session_state.countdown_started and st.session_state.remaining_time <= 0:
+    placeholder.write("⏰ **Time's Up!**")
+    st.session_state.countdown_started = False
+
+    # Play the sound (replace "alarm.mp3" with your sound file path)
+    play_sound("timesup.mp3")
+
