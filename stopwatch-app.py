@@ -28,18 +28,15 @@ def reset_countdown():
 # Title
 st.title("⏳ Countdown Timer with Sound")
 
-# Display the current time below the title as a digital clock
+# Placeholder to display the current time (digital clock)
 current_time_placeholder = st.empty()
 
-# Function to update the current time as a digital clock
-def update_current_time():
-    while True:
+# Function to display the current time (as a live digital clock)
+def display_current_time():
+    while st.session_state.countdown_started:
         current_time = datetime.now().strftime("%H:%M:%S")
-        current_time_placeholder.markdown(f"<h1 style='text-align: center;'>{current_time}</h1>", unsafe_allow_html=True)
+        current_time_placeholder.markdown(f"<h3 style='text-align: center;'>{current_time}</h3>", unsafe_allow_html=True)
         time.sleep(1)
-
-# Run the current time update in the background (as a digital clock)
-st.experimental_rerun()  # Rerun the app to keep updating the clock in real-time
 
 # Input field for countdown time in seconds
 st.session_state.start_time = st.number_input("Set Countdown Time (in seconds)", min_value=0, max_value=3600, value=10)
@@ -57,19 +54,24 @@ with col2:
 placeholder = st.empty()
 
 # Timer countdown loop
-while st.session_state.countdown_started and st.session_state.remaining_time > 0:
-    minutes, seconds = divmod(st.session_state.remaining_time, 60)
-    placeholder.write(f"**Remaining Time:** {int(minutes):02d}:{int(seconds):02d}")
-    
-    # Countdown logic
-    st.session_state.remaining_time -= 1
-    time.sleep(1)
+if st.session_state.countdown_started:
+    # Start live clock in the background while the countdown runs
+    display_current_time()
 
-# When the countdown finishes, display the message and play the sound
-if st.session_state.countdown_started and st.session_state.remaining_time <= 0:
-    placeholder.write("⏰ **Time's Up!**")
-    st.session_state.countdown_started = False
+    while st.session_state.remaining_time > 0:
+        minutes, seconds = divmod(st.session_state.remaining_time, 60)
+        placeholder.write(f"**Remaining Time:** {int(minutes):02d}:{int(seconds):02d}")
+        
+        # Countdown logic
+        st.session_state.remaining_time -= 1
+        time.sleep(1)
 
-    # Play the sound using Streamlit's audio player
-    audio_file = open("timesup.mp3", "rb")
-    st.audio(audio_file.read(), format="audio/mp3")
+    # When the countdown finishes, display the message and play the sound
+    if st.session_state.remaining_time <= 0:
+        placeholder.write("⏰ **Time's Up!**")
+        st.session_state.countdown_started = False
+
+        # Play the sound using Streamlit's audio player
+        audio_file = open("timesup.mp3", "rb")
+        st.audio(audio_file.read(), format="audio/mp3")
+
