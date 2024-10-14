@@ -54,7 +54,7 @@ st.session_state.start_time = st.number_input("Set Countdown Time (in seconds)",
 st.markdown("""
     <style>
     div.stButton > button:first-child {
-        background-color: #E8F074;
+        background-color: #D5DEDD;
         color: black;
         height: 3em;
         width: 10em;
