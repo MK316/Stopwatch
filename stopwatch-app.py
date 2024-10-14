@@ -1,5 +1,6 @@
 import streamlit as st
 import time
+from datetime import datetime
 
 # Set page configuration
 st.set_page_config(page_title="Countdown Timer", layout="centered")
@@ -27,6 +28,18 @@ def reset_countdown():
 # Title
 st.title("⏳ Countdown Timer with Sound")
 
+# Display the current time below the title
+st.markdown("### Current time")
+current_time_placeholder = st.empty()
+
+# Function to update the current time every second
+def update_current_time():
+    current_time = datetime.now().strftime("%H:%M:%S")
+    current_time_placeholder.write(f"**Current Time:** {current_time}")
+
+# Run the current time update
+update_current_time()
+
 # Input field for countdown time in seconds
 st.session_state.start_time = st.number_input("Set Countdown Time (in seconds)", min_value=0, max_value=3600, value=10)
 
@@ -50,6 +63,7 @@ while st.session_state.countdown_started and st.session_state.remaining_time > 0
     # Countdown logic
     st.session_state.remaining_time -= 1
     time.sleep(1)
+    update_current_time()  # Update the current time each second
 
 # When the countdown finishes, display the message and play the sound
 if st.session_state.countdown_started and st.session_state.remaining_time <= 0:
