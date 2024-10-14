@@ -29,13 +29,12 @@ def reset_countdown():
 st.title("⏳ Countdown Timer with Sound")
 
 # Display the current time below the title
-st.markdown("### Current time")
 current_time_placeholder = st.empty()
 
 # Function to update the current time every second
 def update_current_time():
     current_time = datetime.now().strftime("%H:%M:%S")
-    current_time_placeholder.write(f"**Current Time:** {current_time}")
+    current_time_placeholder.write(f"**🐧 Current Time:** {current_time}")
 
 # Run the current time update
 update_current_time()
