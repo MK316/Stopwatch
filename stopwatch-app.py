@@ -49,11 +49,7 @@ def update_clock():
         time.sleep(1)
 
 # Input field for countdown time in seconds
-col1, col2 = st.columns([3, 1])  # Adjusting column size to align the Reset button
-with col1:
-    st.session_state.start_time = st.number_input("Set Countdown Time (in seconds)", min_value=0, max_value=3600, value=120)
-with col2:
-    reset_button = st.button("Reset Countdown")
+st.session_state.start_time = st.number_input("Set Countdown Time (in seconds)", min_value=0, max_value=3600, value=120)
 
 # Button styling using custom CSS
 st.markdown("""
@@ -71,8 +67,11 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Button for starting the countdown
-start_button = st.button("Start Countdown")
+# Countdown Start, Stop, and Reset buttons
+col1, col2, col3 = st.columns([1, 2, 1])  # Adding columns for better alignment
+with col2:
+    start_button = st.button("Start Countdown")
+    reset_button = st.button("Reset Countdown")
 
 # Placeholder for displaying the countdown time
 placeholder = st.empty()
