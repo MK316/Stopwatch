@@ -1,5 +1,6 @@
 import streamlit as st
 import time
+import pytz
 from datetime import datetime
 
 # Set page configuration
@@ -23,9 +24,10 @@ current_time_placeholder = st.empty()
 
 # Function to display the current time (as a live digital clock)
 def display_current_time():
-    current_time = datetime.now().strftime("%H:%M:%S")
+    seoul_tz = pytz.timezone('Asia/Seoul')  # Set timezone to Seoul
+    current_time = datetime.now(seoul_tz).strftime("%H:%M:%S")  # Convert to Seoul time
     current_time_placeholder.markdown(f"<h3 style='text-align: center;'>{current_time}</h3>", unsafe_allow_html=True)
-
+    
 # Function to start the countdown timer
 def start_countdown():
     if not st.session_state.countdown_started:
