@@ -42,11 +42,18 @@ st.title("🐧 MK316 Quiet Timer ⏳")
 # Display the current time below the title
 current_time_placeholder = st.empty()
 
-# Run the current time update
-display_current_time()
+# Run the current time update constantly
+def update_clock():
+    while True:
+        display_current_time()
+        time.sleep(1)
 
 # Input field for countdown time in seconds
-st.session_state.start_time = st.number_input("Set Countdown Time (in seconds)", min_value=0, max_value=3600, value=120)
+col1, col2 = st.columns([3, 1])  # Adjusting column size to align the Reset button
+with col1:
+    st.session_state.start_time = st.number_input("Set Countdown Time (in seconds)", min_value=0, max_value=3600, value=120)
+with col2:
+    reset_button = st.button("Reset Countdown")
 
 # Button styling using custom CSS
 st.markdown("""
@@ -64,25 +71,20 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Button layout using columns for better alignment
-col1, col2 = st.columns(2)
-
-with col1:
-    start_button = st.button("Start Countdown")
-with col2:
-    reset_button = st.button("Reset Countdown")
+# Button for starting the countdown
+start_button = st.button("Start Countdown")
 
 # Placeholder for displaying the countdown time
 placeholder = st.empty()
 
-# Start countdown logic
+# Countdown timer logic (separate from the current clock)
 if start_button:
     start_countdown()
 
 if reset_button:
     reset_countdown()
 
-# Timer countdown loop (ensuring it only runs when countdown has started)
+# Countdown timer logic
 if st.session_state.countdown_started:
     while st.session_state.remaining_time > 0:
         minutes, seconds = divmod(st.session_state.remaining_time, 60)
@@ -91,7 +93,6 @@ if st.session_state.countdown_started:
         # Countdown logic
         st.session_state.remaining_time -= 1
         time.sleep(1)
-        display_current_time()
 
     # When the countdown finishes
     if st.session_state.remaining_time <= 0:
@@ -101,5 +102,7 @@ if st.session_state.countdown_started:
         audio_file = open("timesup.mp3", "rb")
         st.audio(audio_file.read(), format="audio/mp3")
 
-# Display the current time while countdown is running
-display_current_time()
+# Ensure that the current time is always displayed, no rerun needed
+while True:
+    display_current_time()
+    time.sleep(1)
