@@ -77,9 +77,11 @@ st.markdown("""
     }
 
     /* Change border color to blue when clicked */
-    div.stButton > button:focus {
-        border-color: #A9F5ED;  /* Blue color on click */
+    div.stButton > button:focus, 
+    div.stButton > button:active {
+        border-color: #007BFF;  /* Blue border color on click */
         box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);  /* Add a light blue shadow for better effect */
+        color: #007BFF;  /* Keep text blue */
     }
     </style>
 """, unsafe_allow_html=True)
