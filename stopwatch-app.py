@@ -50,7 +50,34 @@ def reset_countdown():
 # Input field for countdown time in seconds
 st.session_state.start_time = st.number_input("Set Countdown Time (in seconds)", min_value=0, max_value=3600, value=10)
 
-# Countdown Start, Stop, and Reset buttons
+# Add custom button colors using Streamlit's CSS support
+st.markdown("""
+    <style>
+    div.stButton > button:first-child {
+        background-color: #FFDD57;
+        color: black;
+        height: 3em;
+        width: 10em;
+        border-radius: 10px;
+        border: 2px solid #FFDD57;
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    div.stButton > button:last-child {
+        background-color: #FF8800;
+        color: black;
+        height: 3em;
+        width: 10em;
+        border-radius: 10px;
+        border: 2px solid #FF8800;
+        font-size: 20px;
+        font-weight: bold;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+# Countdown Start, Stop, and Reset buttons aligned in two columns
 col1, col2 = st.columns(2)
 with col1:
     if st.button("Start Countdown"):
