@@ -17,7 +17,7 @@ if "time_up" not in st.session_state:
     st.session_state.time_up = False
 
 # Title
-st.title("🐧 Quiet Countdown Timer ⏳ ")
+st.title("🐧 MK316 Quiet Timer ⏳ ")
 
 # Placeholder to display the current time (digital clock)
 current_time_placeholder = st.empty()
