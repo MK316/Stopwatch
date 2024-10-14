@@ -42,7 +42,7 @@ st.title("🐧 MK316 Quiet Timer ⏳")
 # Display the current time below the title
 current_time_placeholder = st.empty()
 
-# Run the current time update constantly
+# Continuously update the current time, keeping it visible
 def update_clock():
     while True:
         display_current_time()
@@ -67,8 +67,8 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Countdown Start, Stop, and Reset buttons
-col1, col2, col3 = st.columns([1, 2, 1])  # Adding columns for better alignment
+# Countdown Start and Reset buttons aligned in the center
+col1, col2, col3 = st.columns([1, 2, 1])  # Three columns for central alignment
 with col2:
     start_button = st.button("Start Countdown")
     reset_button = st.button("Reset Countdown")
@@ -101,7 +101,5 @@ if st.session_state.countdown_started:
         audio_file = open("timesup.mp3", "rb")
         st.audio(audio_file.read(), format="audio/mp3")
 
-# Ensure that the current time is always displayed, no rerun needed
-while True:
-    display_current_time()
-    time.sleep(1)
+# Ensure that the current time is always displayed
+display_current_time()
