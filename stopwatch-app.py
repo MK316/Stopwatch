@@ -32,7 +32,7 @@ def reset_stopwatch():
     st.session_state.elapsed_time = 0.0
     st.session_state.stopwatch_started = False
 
-# Function to play sound (when the stopwatch stops or time is up)
+# Function to play sound when the time is up
 def play_sound(file_path):
     if os.path.exists(file_path):
         playsound(file_path)
@@ -54,22 +54,30 @@ with col2:
         if sound_file is not None:
             with open("uploaded_sound.mp3", "wb") as f:
                 f.write(sound_file.read())
-            play_sound("timesup.mp3")
+            play_sound("uploaded_sound.mp3")
 with col3:
     if st.button("Reset"):
         reset_stopwatch()
 
+# Placeholder for displaying time
+placeholder = st.empty()
+
 # Show stopwatch time
-if st.session_state.stopwatch_started:
+while st.session_state.stopwatch_started:
     st.session_state.elapsed_time = time.time() - st.session_state.start_time
+    elapsed_time = st.session_state.elapsed_time
+    minutes, seconds = divmod(elapsed_time, 60)
+    milliseconds = (elapsed_time - int(elapsed_time)) * 1000
 
-# Display the elapsed time in minutes, seconds, and milliseconds
-elapsed_time = st.session_state.elapsed_time
-minutes, seconds = divmod(elapsed_time, 60)
-milliseconds = (elapsed_time - int(elapsed_time)) * 1000
+    # Update the time display
+    placeholder.write(f"**Elapsed Time:** {int(minutes):02d}:{int(seconds):02d}:{int(milliseconds):03d}")
 
-st.write(f"**Elapsed Time:** {int(minutes):02d}:{int(seconds):02d}:{int(milliseconds):03d}")
+    # Refresh every second
+    time.sleep(1)
 
-# Refresh the stopwatch display every second
-time.sleep(1)
-st.experimental_rerun()
+# Display the final time if the stopwatch is stopped
+if not st.session_state.stopwatch_started:
+    elapsed_time = st.session_state.elapsed_time
+    minutes, seconds = divmod(elapsed_time, 60)
+    milliseconds = (elapsed_time - int(elapsed_time)) * 1000
+    placeholder.write(f"**Final Time:** {int(minutes):02d}:{int(seconds):02d}:{int(milliseconds):03d}")
