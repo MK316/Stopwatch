@@ -57,5 +57,5 @@ if st.session_state.countdown_started and st.session_state.remaining_time <= 0:
     st.session_state.countdown_started = False
 
     # Play the sound using Streamlit's audio player
-    audio_file = open("alarm.mp3", "rb")
+    audio_file = open("timesup.mp3", "rb")
     st.audio(audio_file.read(), format="audio/mp3")
