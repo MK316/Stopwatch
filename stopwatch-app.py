@@ -1,6 +1,5 @@
 import streamlit as st
 import time
-from playsound import playsound
 
 # Set page configuration
 st.set_page_config(page_title="Countdown Timer", layout="centered")
@@ -25,10 +24,6 @@ def reset_countdown():
     st.session_state.remaining_time = 0
     st.session_state.countdown_started = False
 
-# Function to play the sound when the countdown finishes
-def play_sound(file_path):
-    playsound(file_path)
-
 # Title
 st.title("⏳ Countdown Timer with Sound")
 
@@ -49,11 +44,11 @@ placeholder = st.empty()
 
 # Timer countdown loop
 while st.session_state.countdown_started and st.session_state.remaining_time > 0:
-    st.session_state.remaining_time -= 1
     minutes, seconds = divmod(st.session_state.remaining_time, 60)
     placeholder.write(f"**Remaining Time:** {int(minutes):02d}:{int(seconds):02d}")
     
-    # Pause for a second
+    # Countdown logic
+    st.session_state.remaining_time -= 1
     time.sleep(1)
 
 # When the countdown finishes, display the message and play the sound
@@ -61,6 +56,6 @@ if st.session_state.countdown_started and st.session_state.remaining_time <= 0:
     placeholder.write("⏰ **Time's Up!**")
     st.session_state.countdown_started = False
 
-    # Play the sound (replace "alarm.mp3" with your sound file path)
-    play_sound("timesup.mp3")
-
+    # Play the sound using Streamlit's audio player
+    audio_file = open("alarm.mp3", "rb")
+    st.audio(audio_file.read(), format="audio/mp3")
