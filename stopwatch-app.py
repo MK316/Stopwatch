@@ -70,7 +70,7 @@ st.markdown("""
         height: 3em;
         width: 10em;
         border-radius: 10px;
-        border: 2px solid #D2D7D6;
+        border: 2px solid #13645B;
         font-size: 20px;
         font-weight: bold;
     }
