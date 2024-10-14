@@ -40,12 +40,15 @@ st.title("⏳ Countdown Timer with Sound")
 # Placeholder to display the current time (digital clock)
 current_time_placeholder = st.empty()
 
-# Continuously update current time without blocking the interface
-if "current_time" not in st.session_state:
-    st.session_state.current_time = datetime.now().strftime("%H:%M:%S")
+# Keep the clock running regardless of the countdown timer
+def run_clock():
+    while True:
+        current_time = datetime.now().strftime("%H:%M:%S")
+        current_time_placeholder.markdown(f"<h3 style='text-align: center;'>{current_time}</h3>", unsafe_allow_html=True)
+        time.sleep(1)
 
-# Update the clock display
-current_time_placeholder.markdown(f"<h3 style='text-align: center;'>{st.session_state.current_time}</h3>", unsafe_allow_html=True)
+# Start running the clock
+st.session_state.clock_running = True
 
 # Input field for countdown time in seconds
 st.session_state.start_time = st.number_input("Set Countdown Time (in seconds)", min_value=0, max_value=3600, value=10)
@@ -64,17 +67,13 @@ placeholder = st.empty()
 
 # Timer countdown loop (only runs when countdown has started)
 if st.session_state.countdown_started and not st.session_state.time_up:
-    for _ in range(st.session_state.remaining_time):
+    while st.session_state.remaining_time > 0:
         minutes, seconds = divmod(st.session_state.remaining_time, 60)
         placeholder.write(f"**Remaining Time:** {int(minutes):02d}:{int(seconds):02d}")
         
         # Countdown logic
         st.session_state.remaining_time -= 1
         time.sleep(1)
-
-        # Update current time each second
-        st.session_state.current_time = datetime.now().strftime("%H:%M:%S")
-        current_time_placeholder.markdown(f"<h3 style='text-align: center;'>{st.session_state.current_time}</h3>", unsafe_allow_html=True)
 
     # When the countdown finishes, display the message and play the sound
     if st.session_state.remaining_time <= 0:
@@ -85,3 +84,6 @@ if st.session_state.countdown_started and not st.session_state.time_up:
         # Play the sound using Streamlit's audio player
         audio_file = open("timesup.mp3", "rb")
         st.audio(audio_file.read(), format="audio/mp3")
+
+# Keep the clock running independently of the countdown
+run_clock()
